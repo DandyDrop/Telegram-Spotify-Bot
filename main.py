@@ -10,7 +10,7 @@ from telethon.sessions import StringSession
 import flask
 from flask import Flask, request, Response
 
-bot = telebot.TeleBot("TOKEN")
+bot = telebot.TeleBot(os.environ.get("TOKEN"))
 app = Flask(__name__)
 client = TelegramClient(StringSession(os.environ.get("STRING_SESSION")), int(os.environ.get("API_ID")),
                                     os.environ.get("API_HASH"))
