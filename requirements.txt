@@ -1,4 +1,4 @@
-PyTelegramBotAPI
+pyTelegramBotAPI
 telethon
 beautifulsoup4
 requests
