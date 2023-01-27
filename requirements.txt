@@ -2,3 +2,5 @@ pyTelegramBotAPI
 telethon
 beautifulsoup4
 requests
+flask
+
