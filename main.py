@@ -1,5 +1,6 @@
 import os
 import time
+import random
 import telebot
 import requests
 from bs4 import BeautifulSoup
@@ -104,7 +105,7 @@ def spotify_main(m):
                 with client:
                     client.loop.run_until_complete(send_and_press(link_final, 50))
                     client.loop.run_until_complete(send_result(os.environ.get("BOT_USERNAME"), 50))
-                time.sleep(10)
+                time.sleep(random.randint(7, 12))
         except Exception as e:
             e = str(e)
             bot.send_message(chat_id=m.chat.id, text=f"Got an error, try again, please. Error text:\n{e}")
