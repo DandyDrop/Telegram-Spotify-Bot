@@ -1,3 +1,5 @@
+import os
+import time
 import telebot
 import requests
 from bs4 import BeautifulSoup
@@ -5,7 +7,43 @@ from telethon.tl.functions.messages import GetBotCallbackAnswerRequest
 from telethon.tl.patched import Message
 from telethon.client import TelegramClient
 from telethon.sessions import StringSession
+import flask
+from flask import Flask, request, Response
+
 bot = telebot.TeleBot("TOKEN")
+app = Flask(__name__)
+client = TelegramClient(StringSession(os.environ.get("STRING_SESSION")), int(os.environ.get("API_ID")),
+                                    os.environ.get("API_HASH"))
+
+def mistake(message):
+    bot.send_message(chat_id=message.from_user.id,
+                     text="Wrong request, here are some right request examples:\n"
+                          "/spot https://open.spotify.com/playlist/37i9dQZF1DWWY64wDtewQt"
+                          "")
+
+
+@app.route('/', methods=['POST', 'GET'])
+def handle_request():
+    if request.headers.get('content-type') == "application/json":
+        update = telebot.types.Update.de_json(request.stream.read().decode("utf-8"))
+        bot.process_new_updates([update])
+        return ""
+    else:
+        flask.abort(403)
+    if request.method == "POST":
+        return Response("OK", status=200)
+    else:
+        return ""
+
+
+@bot.message_handler(commands=['start'])
+def on_start(m):
+    bot.send_message(chat_id=m.chat.id,
+                     text="Hello, I can download whole spotify playlist for you.\n"
+                          "Just send me a message in this format:\n"
+                          "/spot https://open.spotify.com/playlist/37i9dQZF1DWWY64wDtewQt"
+                          "")
+
 
 def spotipars(playlist_url):
     links = []
@@ -17,6 +55,7 @@ def spotipars(playlist_url):
         soup = soup[soup.index('"') + 1:]
         links.append(link)
     return links
+
 
 async def send_and_press(message, check_times):
     await client.send_message("@download_it_bot", message)
@@ -34,13 +73,12 @@ async def send_and_press(message, check_times):
                                       message="mistake, seems like download bot doesnt respond to mes at first")
         else:
             time.sleep(2)
-            
+
+
 async def send_result(to_chat, check_times):
     done = False
     while check_times > 0 and not done:
         mes = await client.get_messages("@download_it_bot", limit=2)
-#         print(f"Last mes:\n{mes[0].message}\n\n")
-#         print(f"Prev mes:\n{mes[1].message}\n\n")
         for mes_one in mes:
             if "Saved by" in str(mes_one.message):
                 mes_new = Message(id=mes_one.id, reply_markup=None, message=None, media=mes_one.media)
@@ -48,19 +86,37 @@ async def send_result(to_chat, check_times):
                 done = True
                 break
 
-#         print("retrying")
         check_times -= 1
         time.sleep(10)
 
+    if not done:
+        await client.send_message(entity="@AUniqD",
+                                  message="mistake, seems like download bot doesnt respond to mes at second")
+
+
 @bot.message_handler(commands=['spot'])
-def main(m):
-    # to be continued
-    links_result = spotipars(link)
-    for link_final in links_result:
-        with TelegramClient(StringSession(os.environ.get("STRING_SESSION")), int(os.environ.get("API_ID")), os.environ.get("API_HASH")) as client:
-            client.loop.run_until_complete(send_and_press(link_final, 50))
-            client.loop.run_until_complete(send_result("BOT_USERNAME", 50))
-        time.sleep(10)
+def spotify_main(m):
+    if m.text != "/spot":
+        try:
+            playlist_url = m.text[6:]
+            links_result = spotipars(playlist_url)
+            for link_final in links_result:
+                with client:
+                    client.loop.run_until_complete(send_and_press(link_final, 50))
+                    client.loop.run_until_complete(send_result(os.environ.get("BOT_USERNAME"), 50))
+                time.sleep(10)
+        except Exception as e:
+            e = str(e)
+            bot.send_message(chat_id=m.chat.id, text=f"Got an error, try again, please. Error text:\n{e}")
+    else:
+        mistake(m)
 
 
-bot.polling()
+def main():
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3000)))
+
+
+if __name__ == '__main__':
+    main()
+
+
