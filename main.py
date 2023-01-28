@@ -105,8 +105,6 @@ async def send_result(to_chat, check_times):
 
 
 async def spotify_main(playlist_url):
-    async with client:
-        await client.send_message('me', "asdfsa")
     bot.send_message("@spotilo", f"Accessed spotify_main with\n{playlist_url}")
     links_result = spotipars(playlist_url)
     for link_final in links_result:
@@ -133,8 +131,6 @@ def spotify_trigger(m):
 
 
 def main():
-    with client:
-        client.loop.run_until_complete(client.send_message('me', 'accessed spotify_trigger by server'))
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3000)))
 
 
