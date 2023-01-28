@@ -112,7 +112,7 @@ async def spotify_main(playlist_url):
             async with client:
 #                 await send_and_press(link_final, 50)
 #                 await send_result("@AUniqD", 50)
-                client.send_message('me', 'accessed async with')
+                await client.send_message('me', 'accessed async with')
             await asyncio.sleep(random.randint(7, 12))
         except Exception as e:
             bot.send_message("@spotilo", str(e))
