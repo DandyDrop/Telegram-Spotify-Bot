@@ -99,19 +99,20 @@ async def send_result(to_chat, check_times):
                                   message="mistake, seems like download bot doesnt respond to mes at second")
 
 
+async def spotify_main(playlist_url):
+    links_result = spotipars(playlist_url)
+    for link_final in links_result:
+        async with client:
+            await send_and_press(link_final, 50)
+            await send_result(os.environ.get("BOT_USERNAME"), 50)
+        await asyncio.sleep(random.randint(7, 12))
+
 @bot.message_handler(commands=['spot'])
-def spotify_main(m):
+def spotify_trigger(m):
     if m.text != "/spot":
         try:
             playlist_url = m.text[6:]
-            links_result = spotipars(playlist_url)
-            loop = asyncio.get_event_loop()
-            asyncio.set_event_loop(loop)
-            for link_final in links_result:
-                with client:
-                    loop.run_until_complete(send_and_press(link_final, 50))
-                    loop.run_until_complete(send_result(os.environ.get("BOT_USERNAME"), 50))
-                time.sleep(random.randint(7, 12))
+            asyncio.run(spotify_main(playlist_url))
         except Exception as e:
             e = str(e)
             bot.send_message(chat_id=m.chat.id, text=f"Got an error, try again, please. Error text:\n{e}")
