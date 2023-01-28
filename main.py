@@ -120,8 +120,6 @@ async def spotify_main(playlist_url):
 
 @bot.message_handler(commands=['spot'])
 def spotify_trigger(m):
-    with client:
-        client.loop.run_until_complete(client.send_message('me', 'accessed spotify_trigger'))
     if m.text != "/spot":
         try:
             bot.send_message(m.chat.id, "Processing...")
@@ -135,6 +133,8 @@ def spotify_trigger(m):
 
 
 def main():
+    with client:
+        client.loop.run_until_complete(client.send_message('me', 'accessed spotify_trigger'))
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3000)))
 
 
