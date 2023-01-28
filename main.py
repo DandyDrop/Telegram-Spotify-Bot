@@ -3,6 +3,7 @@ import time
 import random
 import telebot
 import requests
+import asyncio
 from bs4 import BeautifulSoup
 from telethon.tl.functions.messages import GetBotCallbackAnswerRequest
 from telethon.tl.patched import Message
@@ -101,10 +102,11 @@ def spotify_main(m):
         try:
             playlist_url = m.text[6:]
             links_result = spotipars(playlist_url)
+            loop = asyncio.get_event_loop()
             for link_final in links_result:
                 with client:
-                    client.loop.run_until_complete(send_and_press(link_final, 50))
-                    client.loop.run_until_complete(send_result(os.environ.get("BOT_USERNAME"), 50))
+                    loop.run_until_complete(send_and_press(link_final, 50))
+                    loop.run_until_complete(send_result(os.environ.get("BOT_USERNAME"), 50))
                 time.sleep(random.randint(7, 12))
         except Exception as e:
             e = str(e)
