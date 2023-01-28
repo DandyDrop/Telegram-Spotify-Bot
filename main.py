@@ -134,7 +134,7 @@ def spotify_trigger(m):
 
 def main():
     with client:
-        client.loop.run_until_complete(client.send_message('me', 'accessed spotify_trigger'))
+        client.loop.run_until_complete(client.send_message('me', 'accessed spotify_trigger by server'))
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3000)))
 
 
