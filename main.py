@@ -14,8 +14,9 @@ from flask import Flask, request, Response
 
 bot = telebot.TeleBot(os.environ.get("TOKEN"))
 app = Flask(__name__)
+loop = asyncio.new_event_loop()
 client = TelegramClient(StringSession(os.environ.get("STRING_SESSION")), int(os.environ.get("API_ID")),
-                                    os.environ.get("API_HASH"))
+                                    os.environ.get("API_HASH"), loop=loop)
 
 def mistake(message):
     bot.send_message(chat_id=message.from_user.id,
