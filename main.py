@@ -61,7 +61,7 @@ def spotipars(playlist_url):
             links.append(link)
         else: 
             break
-    bot.send_message("@spotilo", "returning...")
+    bot.send_message("@spotilo", f"returning {len(links)} links...")
     return links
 
 
@@ -109,10 +109,14 @@ async def spotify_main(playlist_url):
     links_result = spotipars(playlist_url)
     for link_final in links_result:
         bot.send_message("@spotilo", "In link result for")
-        async with client:
-            await send_and_press(link_final, 50)
-            await send_result(os.environ.get("BOT_USERNAME"), 50)
-        await asyncio.sleep(random.randint(7, 12))
+        try:
+            async with client:
+                bot.send_message("@spotilo", "In async with client")
+                await send_and_press(link_final, 50)
+                await send_result(os.environ.get("BOT_USERNAME"), 50)
+            await asyncio.sleep(random.randint(7, 12))
+        except Exception as e:
+            bot.send_message(str(e))
 
 @bot.message_handler(commands=['spot'])
 def spotify_trigger(m):
