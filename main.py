@@ -54,8 +54,11 @@ def spotipars(playlist_url):
     for i in range(30):
         soup = soup[soup.index('https://open.spotify.com/track'):]
         link = soup[:soup.index('"')]
-        soup = soup[soup.index('"') + 1:]
-        links.append(link)
+        if link not in links:
+            soup = soup[soup.index('"') + 1:]
+            links.append(link)
+        else: 
+            break
     return links
 
 
@@ -103,6 +106,7 @@ def spotify_main(m):
             playlist_url = m.text[6:]
             links_result = spotipars(playlist_url)
             loop = asyncio.get_event_loop()
+            asyncio.set_event_loop(loop)
             for link_final in links_result:
                 with client:
                     loop.run_until_complete(send_and_press(link_final, 50))
