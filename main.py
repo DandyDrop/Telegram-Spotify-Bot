@@ -16,8 +16,6 @@ bot = telebot.TeleBot(os.environ.get("TOKEN"))
 app = Flask(__name__)
 client = TelegramClient(StringSession(os.environ.get("STRING_SESSION")), int(os.environ.get("API_ID")),
                                     os.environ.get("API_HASH"))
-client.start()
-client.run_until_disconnected()
 
 def mistake(message):
     bot.send_message(chat_id=message.from_user.id,
@@ -68,6 +66,7 @@ def spotipars(playlist_url):
 
 
 async def send_and_press(message, check_times):
+    await client.connect()
     bot.send_message("@spotilo", f"Accessed send_and_press with message:\n{message}")
     await client.send_message("@download_it_bot", message)
     for i in range(check_times):
@@ -87,6 +86,7 @@ async def send_and_press(message, check_times):
 
 
 async def send_result(to_chat, check_times):
+    await client.connect()
     bot.send_message("@spotilo", f"Accessed send_result with to_chat =\n{to_chat}")
     done = False
     while check_times > 0 and not done:
@@ -106,18 +106,18 @@ async def send_result(to_chat, check_times):
                                   message="mistake, seems like download bot doesnt respond to mes at second")
 
 
-async def spotify_main(playlist_url):
-    bot.send_message("@spotilo", f"Accessed spotify_main with\n{playlist_url}")
-    links_result = spotipars(playlist_url)
-    for link_final in links_result:
-        try:
-            async with client:
-#                 await send_and_press(link_final, 50)
-#                 await send_result("@AUniqD", 50)
-                await client.send_message('me', 'accessed async with')
-            await asyncio.sleep(random.randint(7, 12))
-        except Exception as e:
-            bot.send_message("@spotilo", str(e))
+# async def spotify_main(playlist_url):
+#     bot.send_message("@spotilo", f"Accessed spotify_main with\n{playlist_url}")
+#     links_result = spotipars(playlist_url)
+#     for link_final in links_result:
+#         try:
+#             async with client:
+# #                 await send_and_press(link_final, 50)
+# #                 await send_result("@AUniqD", 50)
+#                 await client.send_message('me', 'accessed async with')
+#             await asyncio.sleep(random.randint(7, 12))
+#         except Exception as e:
+#             bot.send_message("@spotilo", str(e))
 
 @bot.message_handler(commands=['spot'])
 def spotify_trigger(m):
@@ -125,7 +125,11 @@ def spotify_trigger(m):
         try:
             bot.send_message(m.chat.id, "Processing...")
             playlist_url = m.text[6:]
-            asyncio.run(spotify_main(playlist_url))
+            links_result = spotipars(playlist_url)
+            for link_final in links_result:
+                loop.run_until_complete(send_and_press(link_final, 50))
+                loop.run_until_complete(send_result("@AUniqD", 50))
+                time.sleep(random.randint(7, 10))
         except Exception as e:
             e = str(e)
             bot.send_message(chat_id=m.chat.id, text=f"Got an error, try again, please. Error text:\n{e}")
