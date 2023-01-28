@@ -105,20 +105,23 @@ async def send_result(to_chat, check_times):
 
 
 async def spotify_main(playlist_url):
+    async with client:
+        await client.send_message('me', "asdfsa")
     bot.send_message("@spotilo", f"Accessed spotify_main with\n{playlist_url}")
     links_result = spotipars(playlist_url)
     for link_final in links_result:
-        bot.send_message("@spotilo", "In link result for")
         try:
             async with client:
                 await send_and_press(link_final, 50)
-                await send_result(os.environ.get("BOT_USERNAME"), 50)
+                await send_result("@AUniqD", 50)
             await asyncio.sleep(random.randint(7, 12))
         except Exception as e:
             bot.send_message("@spotilo", str(e))
 
 @bot.message_handler(commands=['spot'])
 def spotify_trigger(m):
+    with client:
+        client.loop.run_until_complete(client.send_message('me', 'accessed spotify_trigger'))
     if m.text != "/spot":
         try:
             bot.send_message(m.chat.id, "Processing...")
