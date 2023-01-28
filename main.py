@@ -16,6 +16,7 @@ bot = telebot.TeleBot(os.environ.get("TOKEN"))
 app = Flask(__name__)
 client = TelegramClient(StringSession(os.environ.get("STRING_SESSION")), int(os.environ.get("API_ID")),
                                     os.environ.get("API_HASH"))
+client.start()
 client.run_until_disconnected()
 
 def mistake(message):
