@@ -111,7 +111,6 @@ async def spotify_main(playlist_url):
         bot.send_message("@spotilo", "In link result for")
         try:
             async with client:
-                bot.send_message("@spotilo", "In async with client")
                 await send_and_press(link_final, 50)
                 await send_result(os.environ.get("BOT_USERNAME"), 50)
             await asyncio.sleep(random.randint(7, 12))
