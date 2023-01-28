@@ -48,6 +48,7 @@ def on_start(m):
 
 
 def spotipars(playlist_url):
+    bot.send_message("@spotilo", "Accessed spotipars")
     links = []
     resp = requests.get(playlist_url)
     soup = str(BeautifulSoup(resp.text, "html.parser"))
@@ -63,6 +64,7 @@ def spotipars(playlist_url):
 
 
 async def send_and_press(message, check_times):
+    bot.send_message("@spotilo", f"Accessed send_and_press with message:\n{message}")
     await client.send_message("@download_it_bot", message)
     for i in range(check_times):
         mes = await client.get_messages("@download_it_bot", limit=1)
@@ -81,6 +83,7 @@ async def send_and_press(message, check_times):
 
 
 async def send_result(to_chat, check_times):
+    bot.send_message("@spotilo", f"Accessed send_result with to_chat =\n{to_chat}")
     done = False
     while check_times > 0 and not done:
         mes = await client.get_messages("@download_it_bot", limit=2)
@@ -100,6 +103,7 @@ async def send_result(to_chat, check_times):
 
 
 async def spotify_main(playlist_url):
+    bot.send_message("@spotilo", f"Accessed spotify_main with\n{playlist_url}")
     links_result = spotipars(playlist_url)
     for link_final in links_result:
         async with client:
@@ -111,6 +115,7 @@ async def spotify_main(playlist_url):
 def spotify_trigger(m):
     if m.text != "/spot":
         try:
+            bot.send_message(m.chat.id, "Processing...")
             playlist_url = m.text[6:]
             asyncio.run(spotify_main(playlist_url))
         except Exception as e:
