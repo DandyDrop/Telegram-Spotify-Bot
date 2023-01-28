@@ -116,7 +116,7 @@ async def spotify_main(playlist_url):
                 await send_result(os.environ.get("BOT_USERNAME"), 50)
             await asyncio.sleep(random.randint(7, 12))
         except Exception as e:
-            bot.send_message(str(e))
+            bot.send_message("@spotilo", str(e))
 
 @bot.message_handler(commands=['spot'])
 def spotify_trigger(m):
