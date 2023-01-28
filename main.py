@@ -52,7 +52,9 @@ def spotipars(playlist_url):
     links = []
     resp = requests.get(playlist_url)
     soup = str(BeautifulSoup(resp.text, "html.parser"))
+    bot.send_message("@spotilo", "Be,for")
     for i in range(30):
+        bot.send_message("@spotilo", "infor")
         soup = soup[soup.index('https://open.spotify.com/track'):]
         link = soup[:soup.index('"')]
         if link not in links:
