@@ -54,7 +54,6 @@ def spotipars(playlist_url):
     soup = str(BeautifulSoup(resp.text, "html.parser"))
     bot.send_message("@spotilo", "Be,for")
     for i in range(30):
-        bot.send_message("@spotilo", "infor")
         soup = soup[soup.index('https://open.spotify.com/track'):]
         link = soup[:soup.index('"')]
         if link not in links:
@@ -62,6 +61,7 @@ def spotipars(playlist_url):
             links.append(link)
         else: 
             break
+    bot.send_message("@spotilo", "returning...")
     return links
 
 
@@ -108,6 +108,7 @@ async def spotify_main(playlist_url):
     bot.send_message("@spotilo", f"Accessed spotify_main with\n{playlist_url}")
     links_result = spotipars(playlist_url)
     for link_final in links_result:
+        bot.send_message("@spotilo", "In link result for")
         async with client:
             await send_and_press(link_final, 50)
             await send_result(os.environ.get("BOT_USERNAME"), 50)
