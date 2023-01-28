@@ -86,25 +86,26 @@ async def send_and_press(message, check_times):
             time.sleep(2)
 
 
-async def send_result(to_chat, check_times):
+async def send_result(to_chat, check_times):  
     await client.connect()
-    bot.send_message("@spotilo", f"Accessed send_result with to_chat =\n{to_chat}")
-    done = False
-    while check_times > 0 and not done:
-        mes = await client.get_messages("@download_it_bot", limit=2)
-        for mes_one in mes:
-            if "Saved by" in str(mes_one.message):
-                mes_new = Message(id=mes_one.id, reply_markup=None, message=None, media=mes_one.media)
-                await client.send_message(entity=to_chat, message=mes_new)
-                done = True
-                break
+    await client.send_message('me', 'Hello World from Telethon!')
+#     bot.send_message("@spotilo", f"Accessed send_result with to_chat =\n{to_chat}")
+#     done = False
+#     while check_times > 0 and not done:
+#         mes = await client.get_messages("@download_it_bot", limit=2)
+#         for mes_one in mes:
+#             if "Saved by" in str(mes_one.message):
+#                 mes_new = Message(id=mes_one.id, reply_markup=None, message=None, media=mes_one.media)
+#                 await client.send_message(entity=to_chat, message=mes_new)
+#                 done = True
+#                 break
 
-        check_times -= 1
-        time.sleep(10)
+#         check_times -= 1
+#         time.sleep(10)
 
-    if not done:
-        await client.send_message(entity="@AUniqD",
-                                  message="mistake, seems like download bot doesnt respond to mes at second")
+#     if not done:
+#         await client.send_message(entity="@AUniqD",
+#                                   message="mistake, seems like download bot doesnt respond to mes at second")
 
 
 # async def spotify_main(playlist_url):
@@ -139,6 +140,7 @@ def spotify_trigger(m):
 
 
 def main():
+    loop.run_until_complete(send_result("@AUniqD", 50))
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3000)))
 
 
